@@ -79,6 +79,10 @@ class Recipe(object):
                 )
         else:
             self._make_parent_dir()
+            # Delete if recreate is specified.
+            if self.recreate and os.path.exists(self.location):
+                print 'Deleting existing database %s.' % self.location
+                os.unlink(self.location)
             # Build the command.
             cmdline = [self.schevoscript, 'db', 'create']
             if self.app is not None:
@@ -89,8 +93,6 @@ class Recipe(object):
                 cmdline += ['--version=%i' % self.schemaversion]
             if self.sample:
                 cmdline += ['--sample']
-            if self.recreate:
-                cmdline += ['--delete']
             cmdline += [self.location]
             # Call the command.
             print 'Calling %s' % ' '.join(cmdline)
